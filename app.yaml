@@ -5,15 +5,15 @@ env_variables:
   PROJECT: telkomsel-retail-intelligence
   APPLICATION_TITLE: Retina SF Uploader
   APPLICATION_PORT: 8080 
-  DBHOST:  
-  DBNAME: 
-  DBUSER: 
-  DBPASSWORD: 
+  DBHOST: 34.101.67.255 
+  DBNAME: retail-intelligence 
+  DBUSER: nodeuser 
+  DBPASSWORD: rotikeju98
   DBENGINE: postgresql 
-  AUTH_DBHOST: 
-  AUTH_DBNAME:  
-  AUTH_DBUSER:  
-  AUTH_DBPASSWORD: 
+  AUTH_DBHOST: 34.101.67.255
+  AUTH_DBNAME: authentication 
+  AUTH_DBUSER: nodeuser 
+  AUTH_DBPASSWORD: rotikeju98
   AUTH_DBENGINE: postgresql 
   PUBSUB_UPLOAD_XLS_DONE: projects/telkomsel-retail-intelligence/topics/uploaded-xls-done-dev
   PUBSUB_CONVERT_XLS_CSV_DONE: projects/telkomsel-retail-intelligence/topics/convert-xls-csv-done-dev
