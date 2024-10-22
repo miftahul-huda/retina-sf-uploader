@@ -1,14 +1,15 @@
 <h1>
     Upload New User
 </h1>
-<h5>
-    1. Select the excel file containing SF and Outlets, by clicking the box below. Or by dragging the file to the box.<br />
-    2. Click "Upload" button.<br />
-</h5>
+
 <div>
 
     <div id="upload-user-input">
         <div class="mb-3">
+            <h5>
+                1. Select the excel file containing SF and Outlets, by clicking the box below. Or by dragging the file to the box.<br />
+                2. Click "Upload" button.<br />
+            </h5>
             <ul>
                 <li>File format should be XLSX</li>
                 <li>The header should contain: ["sf_code", "nama", "id_outlet", "nama_outlet", "cluster", "branch", "city", "area", "region", "archetype" ] </li>
@@ -159,6 +160,9 @@
         })
     
     });
+
+    let prevMessage = "";
+    let seconds = 0;
     
     function checkStatus(session)
     {
@@ -174,7 +178,16 @@
         console.log(url)
         $.get(url, function(response){
             console.log(response)
-            $(".info-container").html(response.payload.message)
+
+            if(prevMessage == response.payload.message)
+                seconds++;
+            else
+                seconds = 0;
+
+            $(".info-container").html(response.payload.message + " ... (" + seconds + ")")
+            prevMessage = response.payload.message;
+
+
             if(response.payload.status != "Finish" && response.payload.status != "Error")
             {
                 setTimeout(function(){

@@ -359,6 +359,7 @@ class UploadLogic {
                             resolve(items);
 
                         }).catch(async(e)=>{
+                            console.log(e)
                             this.removeFile(csvFile);
 
                             await ProcessStatusLogic.create({
@@ -370,6 +371,8 @@ class UploadLogic {
                         })
                     }
                 }).catch(async(e)=>{
+                    console.log(e)
+
                     this.removeFile(csvFile);
 
                     await ProcessStatusLogic.create({
@@ -387,13 +390,65 @@ class UploadLogic {
         return promise;
     }
 
+    static splitArray(arr, numParts) {
+        const result = [];
+        const partSize = Math.ceil(arr.length / numParts);
+      
+        for (let i = 0; i < arr.length; i += partSize) {
+          result.push(arr.slice(i, i + partSize));
+        }
+      
+        return result;
+    }
+
+    static saveStoreUserTempBulk(storeUserTempParts, idx)
+    {
+        let promise =  new Promise((resolve, reject)=>{
+
+            try {
+                if(idx < storeUserTempParts.length)
+                {
+                    let storeUserTemps = storeUserTempParts[idx];
+                    console.log(`Saving ${idx} - ${storeUserTemps.length} items...`)
+                    StoreUserTempModel.bulkCreate(storeUserTemps).then(async()=>{
+                        console.log(`Saving ${idx} - ${storeUserTemps.length} items is successfull.`)
+                        this.saveStoreUserTempBulk(storeUserTempParts, idx + 1 ).then(()=>{
+                            resolve();
+                        })
+                    }).catch((e)=>{
+                        reject(e);
+                    })
+                }
+                else
+                {
+                    resolve();
+                }
+            }
+            catch(e)
+            {
+                reject(e);
+            }
+
+        })
+        return promise;
+
+    }
+
     static storeToTemporaryDatabase(data, session)
     {
         let promise =  new Promise(async(resolve, reject)=>{
             try{ 
                 let storeUserTemps = UploadLogic.getStoreUserTemps(data, session);
-                await StoreUserTempModel.bulkCreate(storeUserTemps)
-                resolve(storeUserTemps);
+                let storeUserTempParts = this.splitArray(storeUserTemps, 10)
+                console.log(storeUserTempParts)
+
+                this.saveStoreUserTempBulk(storeUserTempParts, 0).then(()=>{
+                    resolve(storeUserTempParts);
+                }).catch((e)=>{
+                    reject(e);
+                })
+                
+                //await StoreUserTempModel.bulkCreate(storeUserTemps)
             }
             catch(e) {
                 reject(e);
