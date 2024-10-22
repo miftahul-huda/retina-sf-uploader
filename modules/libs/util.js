@@ -27,7 +27,7 @@ class Util
           
           fs.createReadStream(file) 
             .pipe(csv({
-              mapHeaders: ({ header, index }) => header.toLowerCase().replace(/\s+/g, '_').replace(/\//g, '_'), // Optional: normalize headers
+              mapHeaders: ({ header, index }) => header.trim().toLowerCase().replace(/\s+/g, '_').replace(/\//g, '_'), // Optional: normalize headers
             }))
             .on('data', (data) => results.push(data))
             .on('end', () => {
@@ -42,7 +42,7 @@ class Util
     }
 
     static includesIgnoreCase(array, searchTerm) {
-      return array.some(element => element.toLowerCase() === searchTerm.toLowerCase());
+      return array.some(element => element.toLowerCase() == searchTerm.toLowerCase());
     }
 } 
 

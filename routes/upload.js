@@ -43,6 +43,7 @@ class UploadRouter {
                 pubsub.publishMessage( process.env.PUBSUB_UPLOAD_XLS_DONE,
                     os.payload
                 );
+                
                 res.status(200).send(os);
             }).catch(function (err){
                 console.log("error")
@@ -77,6 +78,7 @@ class UploadRouter {
                     os.payload
                 );
                 console.log(os)
+
                 res.status(200).send(os);
             }).catch(function (err){
                 console.log("error")
@@ -116,6 +118,7 @@ class UploadRouter {
                 pubsub.publishMessage(process.env.PUBSUB_SAVE_STORE_USER_TEMP_DONE,
                     os.payload
                 );
+                
                 console.log(os)
                 res.status(200).send(os);
             }).catch(function (err){
@@ -157,6 +160,7 @@ class UploadRouter {
                 pubsub.publishMessage( process.env.PUBSUB_PROCESS_STORE_USER_TEMP_DONE,
                     os.payload
                 );
+                
                 console.log(os)
                 res.status(200).send(os);
             }).catch(function (err){
@@ -190,9 +194,11 @@ class UploadRouter {
             
             logic.moveAllToRealTables(data).then(function (os)
             {
+                
                 pubsub.publishMessage(process.env.PUBSUB_TRANSFER_FROM_TEMPORARY_DONE,
                     os.payload
                 );
+                
                 
                 console.log(os)
                 res.status(200).send(os);
@@ -228,10 +234,12 @@ class UploadRouter {
             
             logic.downloadNewUsers(data).then(function (os)
             {
-                /*pubsub.publishMessage("projects/telkomsel-retail-intelligence/topics/dump-new-users-done",
+                /*
+                pubsub.publishMessage("projects/telkomsel-retail-intelligence/topics/dump-new-users-done",
                     os.payload
                 );
                 */
+               
                 console.log(os)
                 res.status(200).send(os);
             }).catch(function (err){

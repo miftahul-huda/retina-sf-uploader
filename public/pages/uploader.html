@@ -1,6 +1,10 @@
 <h1>
     Upload New User
 </h1>
+<h5>
+    1. Select the excel file containing SF and Outlets, by clicking the box below. Or by dragging the file to the box.<br />
+    2. Click "Upload" button.<br />
+</h5>
 <div>
 
     <div id="upload-user-input">
@@ -30,7 +34,7 @@
     </div>
 
     <div id="info" class="info" style="display: flex;">
-        <div class="loading-animated">
+        <div class="info-icon loading-animated">
 
         </div>
         <div class="info-container">
@@ -99,6 +103,9 @@
                 uploadButton.addEventListener("click", function(e) {
                     e.preventDefault();
                     e.stopPropagation();
+
+                    $(".info-container").html("Uploading file to GCS...")
+
     
                     let qfilelength = myDropzone.getQueuedFiles().length;
                     if(PROCESSING == false && qfilelength > 0 )
@@ -170,7 +177,9 @@
             $(".info-container").html(response.payload.message)
             if(response.payload.status != "Finish" && response.payload.status != "Error")
             {
-                checkStatus(session);
+                setTimeout(function(){
+                    checkStatus(session);
+                }, 1000)
             }
             else if (response.payload.status == "Error")
             {
@@ -190,7 +199,10 @@
                 $("#uploadButton").removeClass("btn-secondary")
     
                 $(".info-container").html("Done")
-                $(".loading-animated").css("background-image", "url(../images/check.png)");
+                $(".info-icon").removeClass("loading-animated")
+                $(".info-icon").addClass("done")
+
+                //$(".loading-animated").css("background-image", "url(../images/check.png)");
                 PROCESSING = false;
     
                 DOWNLOAD_URL = JSON.parse(response.payload.data).output;

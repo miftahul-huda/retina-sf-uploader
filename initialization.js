@@ -8,11 +8,13 @@ const StoreUserModel = require("./modules/models/storeusermodel");
 const StoreUserTempModel = require("./modules/models/storeusertempmodel");
 const UploadHistoryModel = require("./modules/models/uploadhistorymodel");
 const UserModel = require("./modules/models/usermodel");
+const { logger } = require('sequelize/lib/utils/logger');
 
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD, {
     host: process.env.DBHOST,
-    dialect: process.env.DBENGINE  
+    dialect: process.env.DBENGINE,
+    logging: false
 });
 
 const sequelizeAuth = new Sequelize(process.env.AUTH_DBNAME, process.env.AUTH_DBUSER, process.env.AUTH_DBPASSWORD, {

@@ -24,6 +24,20 @@ class UploadLogic {
         const model = require("../models/uploadhistorymodel");
         return model;
     }
+
+    static removeFile(file)
+    {
+        try
+        {
+            fs.unlinkSync(file);
+        }
+        catch(errr)
+        {
+            console.error(`Error deleting file: ${file}`)
+            console.error(errr)
+        }
+    }
+
     //Public Function : uploadFile
     static uploadFile(req, targetPath, rosu )
     {
@@ -63,6 +77,8 @@ class UploadLogic {
                     GCS.upload(filenameInfo.bucket, filenameInfo.temporaryFile, filenameInfo.outputFilename ).then(async (response)=>{
                         filenameInfo.session = sessionID
 
+                        this.removeFile(filenameInfo.temporaryFile)
+
                         await ProcessStatusLogic.create({
                             session: sessionID,
                             message: "Uploading file to GCS is successfull",
@@ -73,6 +89,8 @@ class UploadLogic {
                         resolve({ requestID: requestID, status: "success", code: "200", payload: filenameInfo })
                    
                     }).catch(async (e)=>{
+
+                        this.removeFile(filenameInfo.temporaryFile)
 
                         await ProcessStatusLogic.create({
                             session: sessionID,
@@ -121,8 +139,12 @@ class UploadLogic {
                    
                     console.log("convert to CSV")
                     UploadLogic.convertToCsv(tmpXLSfilenamePath, tmpCSVilenamePath);
+                    this.removeFile(tmpXLSfilenamePath)
+
                     GCS.upload(data.bucket, tmpCSVilenamePath, csvUploadedFilepath).then(async()=>{
                         
+                        this.removeFile(tmpCSVilenamePath);
+
                         await ProcessStatusLogic.create({
                             session: data.session,
                             message: "Converting to CSV is successfull.",
@@ -142,13 +164,19 @@ class UploadLogic {
                             }
                         });
 
+                    
+
                     }).catch(async (e) =>{
+                        this.removeFile(tmpCSVilenamePath);
+
                         console.log("ERROR")
                         console.log(e)
 
+
+
                         await ProcessStatusLogic.create({
                             session: data.session,
-                            message: "Converting to CSV failed.",
+                            message: "Converting to CSV failed. Uploading CSV to GCS failed.",
                             status: "Error"
                         })
 
@@ -293,7 +321,8 @@ class UploadLogic {
     {
         let promise =  new Promise(async(resolve, reject)=>{
             try{ 
-                Util.read_csv(csvFile).then(async( dt )=>{
+                Util.read_csv(csvFile).then(async( dt )=>
+                {
                     let o = dt[0];
 
                     //Check CSV header
@@ -303,7 +332,7 @@ class UploadLogic {
                     if(doesnExists.length > 0)
                     {
 
-
+                        this.removeFile(csvFile);
                         let myString = doesnExists.join(", ");
                         reject({ type: "error", 
                             error_code: "CSV_HEADER_INCOMPLETE", 
@@ -325,8 +354,13 @@ class UploadLogic {
                                 message: "Saving to temporary table is successfull.",
                                 status: "Success"
                             })
+
+                            this.removeFile(csvFile);
                             resolve(items);
+
                         }).catch(async(e)=>{
+                            this.removeFile(csvFile);
+
                             await ProcessStatusLogic.create({
                                 session: session,
                                 message: "Processing CSV File error because saving to temporary table failed.",
@@ -335,6 +369,15 @@ class UploadLogic {
                             reject({ type: "error", error_code: "STORE_USER_TEMP_SAVE_ERROR", data:e, message: "Store User Temporary saving to database failed." });
                         })
                     }
+                }).catch(async(e)=>{
+                    this.removeFile(csvFile);
+
+                    await ProcessStatusLogic.create({
+                        session: session,
+                        message: "Processing CSV File error because reading CSV error.",
+                        status: "Error"
+                    })
+                    reject({ type: "error", error_code: "STORE_USER_TEMP_SAVE_ERROR", data:e, message: "Store User Temporary saving to database failed." });
                 })
             }
             catch(e) {
