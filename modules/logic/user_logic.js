@@ -22,9 +22,13 @@ class UserLogic extends CrudLogic {
         let promise =  new Promise(async (resolve, reject)=>{
             try{ 
                 let where = {
-                    username: {
-                        [Op.iLike] : user
-                    }
+                    [Op.and] : [
+                        { isActive: 1 },
+                        {  username: {
+                            [Op.iLike] : user
+                        }}
+                    ]
+
                 }
                 let storeUsers = await StoreUserModel.findAll({ where: where })
                 let storeids = [];
@@ -65,6 +69,15 @@ class UserLogic extends CrudLogic {
             ]
             
         }
+        return where;
+    }
+
+    static getDefaultWhere()
+    {
+        let where = {
+            isActive : 1
+        }
+
         return where;
     }
 

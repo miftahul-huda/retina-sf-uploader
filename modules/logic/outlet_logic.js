@@ -36,6 +36,19 @@ class OutletLogic extends CrudLogic {
         return where;
     }
 
+    static getDefaultWhere()
+    {
+        let where = {
+            [Op.and]: [
+                { isActive : 1},
+                { tag: { [Op.not] : null } }
+            ]
+
+        }
+
+        return where;
+    }
+
     static getOrder()
     {
         let order = [['storeid', 'ASC']];
