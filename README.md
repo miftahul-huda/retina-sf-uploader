@@ -3,7 +3,7 @@ Web Application to process SF data upload. This includes frontend and backend (R
 
 ### Environment Variables:
 
-PROJECT: telkomsel-retail-intelligence  
+PROJECT:  
 APPLICATION_TITLE: Retina SF Uploader  
 APPLICATION_PORT: 8080 
 DBHOST:   
