@@ -1,4 +1,8 @@
 [
     { "path" :  "", "router"  : "./routes/web" },
-    { "path" :  "/sample", "router"  : "./routes/sample", "logic" : "./modules/logic/sample_logic" }
+    { "path" :  "/user", "router"  : "./routes/user", "logic" : "./modules/logic/user_logic" },
+    { "path" :  "/outlet", "router"  : "./routes/outlet", "logic" : "./modules/logic/outlet_logic" },
+    { "path" :  "/upload", "router"  : "./routes/upload", "logic" : "./modules/logic/upload_logic" },
+    { "path" :  "/download", "router"  : "./routes/download", "logic" : "./modules/logic/upload_logic" }
+
 ]

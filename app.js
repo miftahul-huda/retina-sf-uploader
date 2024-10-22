@@ -6,8 +6,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser')
 const session = require('express-session');
-const {Datastore} = require('@google-cloud/datastore');
-const {DatastoreStore} = require('@google-cloud/connect-datastore');
 
 var Initialization = require("./initialization")
 
@@ -31,16 +29,15 @@ app.use(function(req, res, next) {
 });
 
 //Consider all request as application/json
-app.use(express.json({type: '*/*'}));
+//app.use(express.json({type: '*/*'}));
 // parse application/json
 app.use(bodyParser.json())
 
-app.use(session({
-  store: new DatastoreStore({
-    dataset: new Datastore(),
-    kind: 'express-sessions',
-  }),
-  secret: 'levenshtein',saveUninitialized: true,resave: false}));
+//app.use(express.json({limit: '50mb', type: '*/*'}));
+//app.use(bodyParser.json({ limit: "200mb" }));
+//app.use(bodyParser.urlencoded({ limit: "200mb",  extended: true, parameterLimit: 1000000 }));
+
+
 
 //Dynamic routing based on configuration
 const fs = require('fs');
@@ -55,16 +52,12 @@ routers.forEach(function (route){
     logic = require(route.logic)
 
   console.log(logic)
-  let newRouter = r.getRouter(logic);
+  let newRouter = r.getRouter(logic, Initialization);
   app.use(route.path,  newRouter)
 })
 
 
-// set the view engine to ejs
-app.set("view options", {layout: false});  
-app.engine('html', require('ejs').renderFile); 
-app.set('view engine', 'html');
-app.set('views', __dirname + "/public/pages");
+
 
 
 // view engine setup
@@ -75,7 +68,11 @@ app.use(logger('dev'));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+// set the view engine to ejs
+app.set("view options", {layout: false});  
+app.engine('html', require('ejs').renderFile); 
+app.set('view engine', 'html');
+app.set('views', __dirname + "/public/pages");
 
 
 // catch 404 and forward to error handler
@@ -99,7 +96,14 @@ app.use(function(err, req, res, next) {
 
 app.listen(port)
 
-Initialization.initializeDatabase();
+try
+{
+  Initialization.initializeDatabase();
+}
+catch(e)
+{
+  console.error("Database is offline")
+}
 
 console.log(appTitle + " server on  port : " + port)
 
