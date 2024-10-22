@@ -28,6 +28,8 @@
             let rows = response.payload.rows;
             $('#myTable').DataTable({data: rows, 
                 paging: false,
+                searching: false,
+                ordering: false,
                 columns: [
                     { data: 'sfcode' },
                     { data: 'firstname' },
