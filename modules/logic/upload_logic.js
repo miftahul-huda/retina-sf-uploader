@@ -497,10 +497,10 @@ class UploadLogic {
                         //Set Username from authentication.user
         const sqlQuery = `INSERT INTO store_temp (storeid, store_name, 
                             store_branch, store_cluster, store_region, 
-                            store_area, store_city, tag, archetype, "createdAt", "isActive") 
+                            store_area, store_city, store_kecamatan, tag, archetype, "createdAt", "isActive") 
                       SELECT st.storeid, st.store_name, 
                         st.store_branch, st.store_cluster, st.store_region, 
-                        st.store_area, st.store_city, st.tag, st.archetype, NOW(), 1
+                        st.store_area, st.store_city, st.store_kecamatan, st.tag, st.archetype, NOW(), 1
                       FROM store_user_temporary st
                       WHERE st.tag like '${data.session}'
                         AND
@@ -652,10 +652,10 @@ class UploadLogic {
 
                         sql = `INSERT INTO store (storeid, store_name, 
                             store_branch, store_cluster, store_region, 
-                            store_area, store_city, tag, archetype, "createdAt", "isActive") 
+                            store_area, store_city, store_kecamatan, tag, archetype, "createdAt", "isActive") 
                             SELECT st.storeid, st.store_name, 
                                 st.store_branch, st.store_cluster, st.store_region, 
-                                st.store_area, st.store_city, st.tag, st.archetype, st."createdAt", 1
+                                st.store_area, st.store_city, st.store_kecamatan, st.tag, st.archetype, st."createdAt", 1
                             FROM store_temp st
                             WHERE st.tag like '${data.session}'
                             `;
@@ -935,6 +935,7 @@ class UploadLogic {
             o.store_region = item.region;
             o.store_area = item.area;
             o.store_city = item.city;
+            o.store_kecamatan = item.kecamatan;
             o.sfcode = item.sf_code;
             o.name = item.nama;
             o.tag = tag;

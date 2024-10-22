@@ -14,6 +14,7 @@ class StoreUserTempModel extends Model {
             store_region: DataTypes.STRING,
             store_branch: DataTypes.STRING,
             store_city: DataTypes.STRING,
+            store_kecamatan: DataTypes.STRING,
             archetype: DataTypes.STRING,
             tag: DataTypes.STRING
         }, 
