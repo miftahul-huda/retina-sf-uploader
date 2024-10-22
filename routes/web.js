@@ -18,7 +18,14 @@ class WebRouter {
         router.get('', (req, res)=>{
             var dir = __dirname;
             var p = path.resolve( dir, "../public/pages/", "index");
-            res.render(p, { config: me.getConfig() } )
+            res.render(p, { config: me.getConfig(), page: "users.html" } )
+        });
+
+
+        router.get('/upload-users', (req, res)=>{
+            var dir = __dirname;
+            var p = path.resolve( dir, "../public/pages/", "index");
+            res.render(p, { config: me.getConfig(), page: "uploader.html" } )
         });
 
         return router;
