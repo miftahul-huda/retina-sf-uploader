@@ -5,7 +5,7 @@ Web Application to process SF data upload. This includes frontend and backend (R
 
 PROJECT:  
 APPLICATION_TITLE: Retina SF Uploader  
-APPLICATION_PORT: 8080 
+APPLICATION_PORT: 8181 
 DBHOST:   
 DBNAME:   
 DBUSER:    
@@ -26,11 +26,11 @@ PUBSUB_TRANSFER_FROM_TEMPORARY_DONE: projects/telkomsel-retail-intelligence/topi
 ```
 node app.js
 ```
-It will run using port 8080 (defined in Environment Variables)
+It will run using port 8181 (defined in Environment Variables)
 
 To open the web:
 ```
-http://localhost:8080
+http://localhost:8181
 ```
 ### REST API
 
@@ -43,7 +43,7 @@ There are some REST APIs used by frontend:
 It returns list of users with specified offset and limit.
 Example:
 ```
-http://localhost:8080/user?offset=0&limit10
+http://localhost:8181/user?offset=0&limit10
 ```
 will return first 10 data of users
 
@@ -54,7 +54,7 @@ will return first 10 data of users
 It returns list of users with specified offset and limit.
 Example:
 ```
-http://localhost:8080/user/find?keyword=tester&offset=0&limit10
+http://localhost:8181/user/find?keyword=tester&offset=0&limit10
 ```
 will return first 10 data of users
 
@@ -65,7 +65,7 @@ will return first 10 data of users
 It returns list of outlets that must be surveyed by the user.
 Example:
 ```
-http://localhost:8080/user/user.tester/outlets
+http://localhost:8181/user/user.tester/outlets
 ```
 It will return all the outlets user.tester should visits.
 
