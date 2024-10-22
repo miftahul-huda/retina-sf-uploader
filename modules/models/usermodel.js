@@ -6,7 +6,8 @@ class UserModel extends Model {
         super.init({
             sfcode: DataTypes.STRING,
             email: DataTypes.STRING,
-            fullname: DataTypes.STRING, 
+            firstname: DataTypes.STRING, 
+            password: DataTypes.STRING, 
             lastLogin: DataTypes.DATE,
             tag: DataTypes.STRING
         }, 

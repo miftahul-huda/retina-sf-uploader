@@ -56,3 +56,155 @@
     </div>
 
 </div> 
+
+<script>
+
+    $("#info").hide();
+    var PROCESSING = false;
+    var DOWNLOAD_URL = null;
+    
+    Dropzone.options.myDropzone = {
+            autoProcessQueue: false,
+            // Disable auto upload
+            uploadMultiple: false,   // Allow multiple files
+            // ... other Dropzone options ...
+    
+            init: function() {
+                var myDropzone = this;
+        
+                this.on("success", function(file, response) {
+                    // Handle the successful upload here
+                    console.log("File uploaded successfully:", file.name);
+                    console.log("Server response:", response);
+    
+                    // Access specific data from the response (if available)
+                    if (response.message) {
+                        console.log("Message from server:", response.message);
+                    }
+    
+                    // You can also access file information:
+                    console.log("File size:", file.size);
+                    console.log("File type:", file.type); 
+    
+                    checkStatus(response.payload.session)
+    
+                    
+                });
+    
+    
+                // Get the upload button
+                var uploadButton = document.getElementById('uploadButton');
+    
+                // Event listener for the upload button
+                uploadButton.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+    
+                    let qfilelength = myDropzone.getQueuedFiles().length;
+                    if(PROCESSING == false && qfilelength > 0 )
+                    {
+                        PROCESSING = true;
+                        let checked = $("#rosu")[0].checked;
+                        let rosu = false;
+                        if(checked)
+                            rosu = true;
+                        let url = `/upload?path=gs://retail-intelligence-bucket/uploaded-users&rosu=${rosu}`;
+                        console.log(url)
+                        myDropzone.options.url = url; 
+    
+                        $("#upload-user-input").hide();
+                        $("#info").show();
+    
+    
+                        myDropzone.processQueue(); // Tell Dropzone to process the queue
+                    }
+    
+                });
+    
+                // Optional: Listen for file added event
+                this.on("addedfile", function(file) { 
+                    console.log("File added:", file);
+                });
+    
+                // Optional: Listen for complete event
+                this.on("complete", function(file) {
+                    console.log("File upload complete:", file);
+                });
+    
+                // ... other event listeners ...
+            }
+    };
+    
+    $(document).ready(function(){
+        $("#rosu").mousedown(function(){
+            let checked = $(this)[0].checked;
+            let rosu = false;
+            if(checked)
+                rosu = true;
+            let url = `/upload?path=gs://retail-intelligence-bucket/uploaded-users&rosu=${rosu}`;
+            $("#my-dropzone").prop("action", url);
+            Dropzone.options.url = url;
+        })
+    
+        $("#btnUpload").off("click")
+        $("#btnUpload").on("click", function(){
+            location = "";
+        })
+    
+    });
+    
+    function checkStatus(session)
+    {
+    
+        $("#uploadButton").html("Processing....")
+        $("#uploadButton").prop("disabled")
+        $("#uploadButton").removeClass("btn-info")
+        $("#uploadButton").addClass("btn-secondary")
+    
+    
+    
+        let url = "/upload/status?session=" + session;
+        console.log(url)
+        $.get(url, function(response){
+            console.log(response)
+            $(".info-container").html(response.payload.message)
+            if(response.payload.status != "Finish" && response.payload.status != "Error")
+            {
+                checkStatus(session);
+            }
+            else if (response.payload.status == "Error")
+            {
+    
+                $("#uploadButton").hide();
+    
+                $(".info-container").html("Error : " + response.payload.message)
+                $(".loading-animated").css("background-image", "url(../images/error.png)");
+                PROCESSING = false;
+            }
+            else
+            {
+                $("#uploadButton").html("<i class=\"fas fa-upload\"></i> &nbsp;Download new SF")
+                $("#uploadButton").prop("disabled", false)
+    
+                $("#uploadButton").addClass("btn-info")
+                $("#uploadButton").removeClass("btn-secondary")
+    
+                $(".info-container").html("Done")
+                $(".loading-animated").css("background-image", "url(../images/check.png)");
+                PROCESSING = false;
+    
+                DOWNLOAD_URL = JSON.parse(response.payload.data).output;
+    
+                $("#uploadButton").off("click")
+                $("#uploadButton").on("click", function(){
+    
+                    url = "/download?url=" + DOWNLOAD_URL;
+                    console.log(url)
+                    window.open(url)
+                })
+    
+            }
+        });
+    
+    }
+    </script>

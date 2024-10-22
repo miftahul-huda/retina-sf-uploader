@@ -1,3 +1,40 @@
 <h1>
     List of Users
 </h1>
+<div>
+    <div>
+        <table id="myTable" class="display">
+            <thead>
+                <tr>
+                    <th>SF Code</th>
+                    <th>Nama</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<script>
+    let offset = 0;
+    let limit = 10;
+    $(document).ready(function(){
+        
+        let url = `/user?offset=${offset}&limit=${limit}`
+        $.get(url, function(response){
+            let rows = response.payload.rows;
+            $('#myTable').DataTable({data: rows, 
+                paging: false,
+                columns: [
+                    { data: 'sfcode' },
+                    { data: 'firstname' },
+                    { data: 'email' },
+                    { data: 'password' }
+
+                ]})
+        })
+    })
+</script>
