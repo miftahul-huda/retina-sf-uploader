@@ -11,7 +11,8 @@ class StoreModel extends Model {
             store_region: DataTypes.STRING,
             store_branch: DataTypes.STRING,
             store_city: DataTypes.STRING,
-            tag: DataTypes.STRING
+            tag: DataTypes.STRING,
+            archetype: DataTypes.STRING
         }, 
         { sequelize, modelName: 'store', tableName: 'store', force: force });
     }

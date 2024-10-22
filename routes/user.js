@@ -1,4 +1,6 @@
-class UserRouter {
+const CrudRouter = require('./crudrouter');
+
+class UserRouter extends CrudRouter {
 
     static getRouter(logic)
     {
@@ -72,6 +74,11 @@ class UserRouter {
         });
 
         return router;
+    }
+
+    static init(req, res)
+    {
+
     }
 }
 
