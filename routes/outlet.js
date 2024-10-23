@@ -1,6 +1,6 @@
 const CrudRouter = require("./crudrouter");
 
-class OutletRouter{
+class OutletRouter extends CrudRouter{
 
     static getRouter(logic)
     {

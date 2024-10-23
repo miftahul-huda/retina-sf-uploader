@@ -262,3 +262,9 @@ a {
   background-color: #343a40;
   padding-top: 3%;
 }
+
+.div-text 
+{
+  align-items: center; 
+  align-self: center;
+}

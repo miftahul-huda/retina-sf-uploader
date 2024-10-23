@@ -24,9 +24,21 @@ class UserLogic extends CrudLogic {
                 let where = {
                     [Op.and] : [
                         { isActive: 1 },
-                        {  username: {
-                            [Op.iLike] : user
-                        }}
+                        {
+                            [Op.or] : [
+                                {  
+                                    sfcode: {
+                                        [Op.iLike] : user
+                                    }
+                                },
+                                {  
+                                    username: {
+                                        [Op.iLike] : user
+                                    }
+                                },
+                            ]
+                        }
+                        
                     ]
 
                 }

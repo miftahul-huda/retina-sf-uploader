@@ -1,36 +1,25 @@
 <h1>
-    List of Users
+    List of Outlets for <%- sfcode -%>
 </h1>
+<div>
+    <button id="btnBack" class="btn btn-primary">
+        Back
+    </button>
+</div>
 <div class="content">
-    <div class="row">
-        <div  class="col-x2-1 div-text">Page</div>
-        <div class="col-sm-1">
-            <select class="form-control select2" id="cmbPage">
-
-            </select>
-        </div>
-        <div class="col-sm-1">
-
-        </div>
-        <div class="col-xs-1 div-text">
-            Search User
-        </div>
-        <div class="col-sm-2">
-            <input id="keyword" type="text" class="form-control" placeholder="Enter sfcode, name or username here" />
-        </div>
-        <div class="col-sm-2">
-            <button class="btn btn-primary" id="btnFind">Find</button>
-        </div>
-    </div>
     <div>
         <table id="myTable" class="display">
             <thead>
                 <tr>
-                    <th>SF Code</th>
-                    <th>Nama</th>
-                    <th>Username</th>
-                    <th>Password</th>
-                    <th>Outlets</th>
+                    <th>Outlet ID</th>
+                    <th>Outlet Name</th>
+                    <th>Cluster</th>
+                    <th>Branch</th>
+                    <th>Region</th>
+                    <th>Area</th>
+                    <th>City</th>
+                    <th>Kecamatan</th>
+                    <th>Archetype</th>
                 </tr>
             </thead>
         </table>
@@ -95,39 +84,24 @@
 
         return data;
     }
-
-    function showOutlets(sfcode)
-    {
-        let keyword = $("#keyword").val();
-        let pg = $("#cmbPage").val();
-
-        let url = "/user-outlets?sfcode=" + sfcode + "&pg=" + pg + "&keyword=" + keyword ;
-        location = url;
-    }
-
     function populateData(pg, search)
     {
         let offset = getOffset(pg, limit);
 
-        let url = `/user?offset=${offset}&limit=${limit}`
-        if(search != null && search.length > 0)
-            url = `/user/find?offset=${offset}&limit=${limit}&keyword=${search}`
+        let url = `/user/<%- sfcode -%>/outlets?offset=${offset}&limit=${limit}`
+        console.log("URL")
+        console.log(url)
 
+        if(search != null && search.length > 0)
+            url = `/user/<%- sfcode -%>/find?offset=${offset}&limit=${limit}&keyword=${search}`
         
         $("#myTable").css("opacity", 0.2)
-
         $.get(url, function(response){
 
             $("#myTable").css("opacity", 1)
 
             console.log(response)
-            let rows = response.payload.rows;
-            let total = response.payload.count;
-
-            rows = initData(rows)
-            console.log(total)
-
-            fillPageCombo(total, limit, pg)
+            let rows = response.payload;
 
             if(myTable != null)
             {
@@ -135,18 +109,20 @@
             }
             else
             {
-
                 myTable = $('#myTable').DataTable({data: rows, 
                 paging: false,
                 searching: false,
                 ordering: false,
                 columns: [
-                    { data: 'sfcode' },
-                    { data: 'firstname' },
-                    { data: 'email' },
-                    { data: 'password' },
-                    { data: 'outlets' }
-
+                    { data: 'storeid' },
+                    { data: 'store_name' },
+                    { data: 'store_cluster' },
+                    { data: 'store_branch' },
+                    { data: 'store_region' },
+                    { data: 'store_area' },
+                    { data: 'store_city' },
+                    { data: 'store_kecamatan' },
+                    { data: 'archetype' },
                 ]})
             }
 
@@ -179,12 +155,13 @@
             }
         })
 
-        let pg = getQueryParam("pg")
-        if(pg == null)
-            pg = 1;
-        let keyword = getQueryParam("keyword")
-        $("#keyword").val(keyword)
+        $("#btnBack").on("click", function(){
+            let pg = getQueryParam("pg")
+            let keyword = getQueryParam("keyword")
+            location = "/?pg=" + pg + "&keyword=" + keyword;
 
-        populateData(pg, keyword);
+        })
+
+        populateData(1);
     })
 </script>

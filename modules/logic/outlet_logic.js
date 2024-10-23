@@ -15,6 +15,7 @@ class OutletLogic extends CrudLogic {
         return "id";
     }
 
+
     static getWhere(search)
     {
         let where = {

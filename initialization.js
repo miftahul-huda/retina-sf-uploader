@@ -14,7 +14,7 @@ const { logger } = require('sequelize/lib/utils/logger');
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD, {
     host: process.env.DBHOST,
     dialect: process.env.DBENGINE,
-    logging: false
+    logging: true
 });
 
 const sequelizeAuth = new Sequelize(process.env.AUTH_DBNAME, process.env.AUTH_DBUSER, process.env.AUTH_DBPASSWORD, {

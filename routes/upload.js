@@ -194,7 +194,6 @@ class UploadRouter {
             
             logic.moveAllToRealTables(data).then(function (os)
             {
-                
                 pubsub.publishMessage(process.env.PUBSUB_TRANSFER_FROM_TEMPORARY_DONE,
                     os.payload
                 );
@@ -239,7 +238,7 @@ class UploadRouter {
                     os.payload
                 );
                 */
-               
+
                 console.log(os)
                 res.status(200).send(os);
             }).catch(function (err){

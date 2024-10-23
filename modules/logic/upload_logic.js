@@ -766,9 +766,10 @@ class UploadLogic {
                                 WHERE tag like '${data.session}'
                                 ;`;
 
-                            if(data.rosu)
-                            {
-                                this.runQuery(sql, QueryTypes.INSERT, data, "moveAllToRealTables()").then(()=>{
+                            this.runQuery(sql, QueryTypes.INSERT, data, "moveAllToRealTables()").then(()=>{
+
+                                if(data.rosu)
+                                {
 
                                     sql = `UPDATE store_user set "isActive" = 0 where
                                             sfcode in
@@ -816,28 +817,31 @@ class UploadLogic {
                                     }).catch((e)=>{
                                         reject(e)
                                     })
+
+                                }
+                                else
+                                {
+                                    ProcessStatusLogic.create({
+                                        session: data.session,
+                                        message: "Transfering data from temporary is successfull",
+                                        status: "Success"
+                                    })
     
-                                }).catch((e)=>{
-                                    reject(e)
-                                })
+                                    let requestID = "req-" + Util.random_str(10)
+                                    resolve({
+                                        requestID: requestID,
+                                        status: "success",
+                                        code: 200,
+                                        payload: data
+                                    });
+                                }
+    
+                                
 
-                            }
-                            else
-                            {
-                                await ProcessStatusLogic.create({
-                                    session: data.session,
-                                    message: "Transfering data from temporary is successfull",
-                                    status: "Success"
-                                })
+                            }).catch((e)=>{
+                                reject(e)
+                            })
 
-                                let requestID = "req-" + Util.random_str(10)
-                                resolve({
-                                    requestID: requestID,
-                                    status: "success",
-                                    code: 200,
-                                    payload: data
-                                });
-                            }
                             
                         }).catch((e)=>{
                             reject(e)
