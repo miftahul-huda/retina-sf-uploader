@@ -36,7 +36,7 @@ http://localhost:8181
 
 There are some REST APIs used by frontend:
 
-# 1. Get user list
+#### 1. Get user list
 ```
 /user?offset=<offset>&limit=<limit> 
 ```
@@ -47,7 +47,7 @@ http://localhost:8181/user?offset=0&limit10
 ```
 will return first 10 data of users
 
-# 2. Search user by keyword
+#### 2. Search user by keyword
 ```
 /user/find?keyword=<keyword>offset=<offset>&limit=<limit> 
 ```
@@ -58,7 +58,7 @@ http://localhost:8181/user/find?keyword=tester&offset=0&limit10
 ```
 will return first 10 data of users
 
-# 3. Get User Outlets
+#### 3. Get User Outlets
 ```
 /user/<user>/outlets
 ```
