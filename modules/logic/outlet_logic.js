@@ -22,13 +22,13 @@ class OutletLogic extends CrudLogic {
             [Op.or]:[
                 {
                     store_name : {
-                        [Op.like] : "%" + search + "%"
+                        [Op.iLike] : "%" + search + "%"
                     } 
                 }
                 ,
                 {
                     storeid : {
-                        [Op.like] : "%" + search + "%"
+                        [Op.iLike] : "%" + search + "%"
                     } 
                 }
             ]
