@@ -9,7 +9,8 @@ class UserModel extends Model {
             firstname: DataTypes.STRING, 
             password: DataTypes.STRING, 
             lastLogin: DataTypes.DATE,
-            tag: DataTypes.STRING
+            tag: DataTypes.STRING,
+            isadmin: DataTypes.INTEGER
         }, 
         { sequelize, modelName: 'user', tableName: 'user', force: force });
     }

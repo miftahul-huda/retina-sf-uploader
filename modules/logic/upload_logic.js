@@ -835,8 +835,6 @@ class UploadLogic {
                                         payload: data
                                     });
                                 }
-    
-                                
 
                             }).catch((e)=>{
                                 reject(e)

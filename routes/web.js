@@ -16,6 +16,11 @@ class WebRouter {
         let me = this;
 
         router.get('', (req, res)=>{
+            if(req.session.user == null)
+            {
+                res.redirect("/login")
+            }
+
             var dir = __dirname;
             var p = path.resolve( dir, "../public/pages/", "index");
             res.render(p, { config: me.getConfig(), page: "users.html" } )
@@ -26,12 +31,20 @@ class WebRouter {
             let sfcode = req.query.sfcode;
             console.log("SFCODE")
             console.log(sfcode)
+            if(req.session.user == null)
+            {
+                res.redirect("/login")
+            }
 
             var p = path.resolve( dir, "../public/pages/", "index");
             res.render(p, { config: me.getConfig(), page: "user-outlets.html", sfcode: sfcode } )
         });
 
         router.get('/outlets', (req, res)=>{
+            if(req.session.user == null)
+            {
+                res.redirect("/login")
+            }
             var dir = __dirname;
             var p = path.resolve( dir, "../public/pages/", "index");
             res.render(p, { config: me.getConfig(), page: "outlets.html" } )
@@ -39,9 +52,24 @@ class WebRouter {
 
 
         router.get('/upload-users', (req, res)=>{
+            if(req.session.user == null)
+            {
+                res.redirect("/login")
+            }
             var dir = __dirname;
             var p = path.resolve( dir, "../public/pages/", "index");
             res.render(p, { config: me.getConfig(), page: "uploader.html" } )
+        });
+
+        router.get('/login', (req, res)=>{
+            var dir = __dirname;
+            var p = path.resolve( dir, "../public/pages/", "login");
+            res.render(p, { config: me.getConfig() } )
+        });
+
+        router.get('/logout', (req, res)=>{
+            req.session.user = null;
+            res.redirect("/login")
         });
 
         return router;
