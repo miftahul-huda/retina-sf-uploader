@@ -77,7 +77,6 @@ class UploadRouter {
                 pubsub.publishMessage( process.env.PUBSUB_CONVERT_XLS_CSV_DONE,
                     os.payload
                 );
-                console.log(os)
 
                 res.status(200).send(os);
             }).catch(function (err){
@@ -93,9 +92,6 @@ class UploadRouter {
 
         router.post("/save-store-user-temp", async (req, res)=>{
             let logic = router.logic;
-
-            console.log("req.body")
-            console.log(req.body)
 
             let message = Buffer.from(req.body.message.data, 'base64').toString('utf-8');
             let data = message
@@ -119,7 +115,6 @@ class UploadRouter {
                     os.payload
                 );
                 
-                console.log(os)
                 res.status(200).send(os);
             }).catch(function (err){
                 console.log("error")
@@ -134,9 +129,6 @@ class UploadRouter {
         router.post("/process-store-user-temp", async (req, res)=>{
             let logic = router.logic;
             logic.Initialization = router.Initialization;
-
-            console.log("req.body")
-            console.log(req.body)
 
             let message = Buffer.from(req.body.message.data, 'base64').toString('utf-8');
             let data = message
@@ -161,7 +153,6 @@ class UploadRouter {
                     os.payload
                 );
                 
-                console.log(os)
                 res.status(200).send(os);
             }).catch(function (err){
                 console.log("error")
@@ -196,10 +187,8 @@ class UploadRouter {
             {
                 pubsub.publishMessage(process.env.PUBSUB_TRANSFER_FROM_TEMPORARY_DONE,
                     os.payload
-                );
+                );                
                 
-                
-                console.log(os)
                 res.status(200).send(os);
             }).catch(function (err){
                 console.log("error")
@@ -239,7 +228,6 @@ class UploadRouter {
                 );
                 */
 
-                console.log(os)
                 res.status(200).send(os);
             }).catch(function (err){
                 console.log("error")
@@ -253,9 +241,6 @@ class UploadRouter {
 
         router.post("/done", async (req, res)=>{
             let logic = router.logic;
-
-            console.log("req.body")
-            console.log(req.body)
 
             let message = Buffer.from(req.body.message.data, 'base64').toString('utf-8');
             let data = message
@@ -272,7 +257,6 @@ class UploadRouter {
             
             logic.done(data).then(function (os)
             {
-                console.log(os)
                 res.status(200).send(os);
             }).catch(function (err){
                 console.log("error")
