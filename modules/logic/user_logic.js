@@ -49,9 +49,15 @@ class UserLogic extends CrudLogic {
                 })
 
                 where = {
-                    storeid: {
-                        [Op.in] : storeids
-                    }
+                    [Op.and]:[
+                        { isActive: 1 },
+                        {
+                            storeid: {
+                                [Op.in] : storeids
+                            }
+                        }
+                    ]
+
                 }
                 let outlets = await StoreModel.findAll({where : where});
                 resolve({ success: true, payload: outlets });
