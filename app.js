@@ -9,6 +9,10 @@ const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const { Sequelize, DataTypes } = require('sequelize');
 
+const {Datastore} = require('@google-cloud/datastore');
+const {DatastoreStore} = require('@google-cloud/connect-datastore');
+
+
 var Initialization = require("./initialization")
 
 
@@ -23,6 +27,21 @@ ejs.close = '}}';
 
 
 var app = express();
+
+app.use(session({
+  store: new DatastoreStore({
+    kind: 'express-sessions',
+
+    // Optional: expire the session after this many milliseconds.
+    // note: datastore does not automatically delete all expired sessions
+    // you may want to run separate cleanup requests to remove expired sessions
+    // 0 means do not expire
+    expirationMs: 0,
+    dataset: new Datastore({
+    })
+  }),
+  secret: 'my-secret'
+}));
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -46,27 +65,6 @@ app.use(express.json());
 try
 {
   Initialization.initializeDatabase();
-  let sequelize = Initialization.sequelizeAuth;
-
-  const Session = sequelize.define('Session', {
-    sid: {
-      type: DataTypes.STRING,
-      primaryKey: true,
-    },
-    expires: DataTypes.DATE,
-    data: DataTypes.TEXT, 
-  
-  });
-
-  app.use(session({
-    secret: 'hudabeybi',
-    store: new SequelizeStore({
-      db: sequelize,
-      table: 'Session',
-    }),
-    resave: false,
-    saveUninitialized: true,
-  }));
   
 }
 catch(e)
@@ -111,12 +109,12 @@ app.set('views', __dirname + "/public/pages");
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+/*app.use(function(req, res, next) {
   next(createError(404));
-});
+});*/
 
 // error handler
-app.use(function(err, req, res, next) {
+/*app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -125,6 +123,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+*/
 
 
 

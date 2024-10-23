@@ -20,10 +20,14 @@ class WebRouter {
             {
                 res.redirect("/login")
             }
+            else
+            {
 
-            var dir = __dirname;
-            var p = path.resolve( dir, "../public/pages/", "index");
-            res.render(p, { config: me.getConfig(), page: "users.html" } )
+                var dir = __dirname;
+                var p = path.resolve( dir, "../public/pages/", "index");
+                res.render(p, { config: me.getConfig(), page: "users.html" } )
+            }
+
         });
 
         router.get('/user-outlets', (req, res)=>{
@@ -35,9 +39,12 @@ class WebRouter {
             {
                 res.redirect("/login")
             }
+            else
+            {
+                var p = path.resolve( dir, "../public/pages/", "index");
+                res.render(p, { config: me.getConfig(), page: "user-outlets.html", sfcode: sfcode } )
+            }
 
-            var p = path.resolve( dir, "../public/pages/", "index");
-            res.render(p, { config: me.getConfig(), page: "user-outlets.html", sfcode: sfcode } )
         });
 
         router.get('/outlets', (req, res)=>{
@@ -45,9 +52,13 @@ class WebRouter {
             {
                 res.redirect("/login")
             }
-            var dir = __dirname;
-            var p = path.resolve( dir, "../public/pages/", "index");
-            res.render(p, { config: me.getConfig(), page: "outlets.html" } )
+            else
+            {
+                var dir = __dirname;
+                var p = path.resolve( dir, "../public/pages/", "index");
+                res.render(p, { config: me.getConfig(), page: "outlets.html" } )
+            }
+
         });
 
 
@@ -56,9 +67,12 @@ class WebRouter {
             {
                 res.redirect("/login")
             }
-            var dir = __dirname;
-            var p = path.resolve( dir, "../public/pages/", "index");
-            res.render(p, { config: me.getConfig(), page: "uploader.html" } )
+            else 
+            {
+                var dir = __dirname;
+                var p = path.resolve( dir, "../public/pages/", "index");
+                res.render(p, { config: me.getConfig(), page: "uploader.html" })
+            }
         });
 
         router.get('/login', (req, res)=>{
