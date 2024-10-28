@@ -260,7 +260,7 @@ a {
   width: 15%;
   height: 100vh;
   background-color: #343a40;
-  padding-top: 3%;
+  padding-top: 2%;
 }
 
 .div-text 
@@ -292,3 +292,36 @@ a {
 {
   background-image: url(../images/upload.png);
 }
+
+.logo 
+{
+  width: 40px;
+  height: 40px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  background-image: url(../images/logo.png);
+}
+
+.logo-text
+{
+  width: auto;
+  height: 40px;
+  font-size: 20pt;
+  line-height: 40px;
+  display: flex; 
+}
+
+.logo-text > div
+{
+  font-size: x-small;
+}
+
+.environment
+{
+  width: 100px;
+  height: 30px;
+  font-size: small;
+  margin-left: 36px;
+}
+

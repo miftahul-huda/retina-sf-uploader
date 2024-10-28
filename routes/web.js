@@ -4,7 +4,7 @@ class WebRouter {
 
     static getConfig()
     {
-        return {};
+        return { environment: process.env.ENVIRONMENT };
     }
 
     static getRouter(logic)

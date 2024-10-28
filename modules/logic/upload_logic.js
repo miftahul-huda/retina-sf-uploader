@@ -925,7 +925,6 @@ class UploadLogic {
                 })
 
                 let users = this.getNewUsers(data).then((users)=>{
-                    console.log(users)
                     let tmpFilename = data.session + ".xlsx";
                     let tmpFilePath = "/tmp/" + tmpFilename;
                     let uploadPath = data.outputFilename;
@@ -1022,8 +1021,7 @@ class UploadLogic {
 
     static getStoreUserTemps(data, session)
     {
-        console.log("getStoreUserTemps()")
-        console.log(data)
+
         let tag = session; // + " - " + moment(Date.now()).format("YYYY-MM-DD");
         let storeUserTemps = [];
         data.forEach((item)=>{
