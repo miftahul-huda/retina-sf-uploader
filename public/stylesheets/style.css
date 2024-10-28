@@ -323,5 +323,10 @@ a {
   height: 30px;
   font-size: small;
   margin-left: 36px;
+  border-radius: 5px;
+  padding: 5px;
+  background-color: rgb(214, 231, 86);
+  color: #000;
+  text-align: center;
 }
 
