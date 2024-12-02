@@ -14,7 +14,7 @@
           </div>
           
         </div>
-        <% if(config.environment != "") { %>
+        <% if(config.environment != "" && config.environment != "None") { %>
         <div class="environment">
           <%- config.environment -%>
         </div>
@@ -22,8 +22,8 @@
  
 
         <div style="height: 30px"></div>
-        <a class="nav-item nav-link active" href="/"><i class="fas fa-users"></i> Users</a>
-        <a class="nav-item nav-link" href="/upload-users"><i class="fas fa-upload"></i> Upload new Users</a>
+        <a class="nav-item nav-link active" href="/upload-users"><i class="fas fa-upload"></i> Upload new Users</a>
+        <a class="nav-item nav-link " href="/users"><i class="fas fa-users"></i> Users</a>
         <a class="nav-item nav-link" href="/outlets"><i class="fas fa-store"></i> Outlets</a>
         <a class="nav-item nav-link" href="/logout"><i class="fas fa-sign-out"></i> Logout</a>
 

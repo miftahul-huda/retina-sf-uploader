@@ -15,7 +15,7 @@ class WebRouter {
         router.logic = logic;
         let me = this;
 
-        router.get('', (req, res)=>{
+        router.get('/users', (req, res)=>{
             if(req.session.user == null)
             {
                 res.redirect("/login")
@@ -28,6 +28,10 @@ class WebRouter {
                 res.render(p, { config: me.getConfig(), page: "users.html" } )
             }
 
+        });
+
+        router.get('', (req, res)=>{
+            res.redirect("/upload-users")
         });
 
         router.get('/user-outlets', (req, res)=>{

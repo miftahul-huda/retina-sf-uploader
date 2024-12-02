@@ -543,8 +543,11 @@ class UploadLogic {
         //Set Username from authentication.user, the non existing user will have no usernames and password
         const sqlQuery = `UPDATE store_user_temporary
                             SET username = t1.email, "password" = t1."password"
-                            FROM dblink('host=${process.env.AUTH_DBHOST} user=nodeuser password=rotikeju98 dbname=authentication', 
-                                        'SELECT sfcode, email, "password" FROM "user"') AS t1 (sfcode text, email text, "password" text)
+                            FROM dblink('host=${process.env.AUTH_DBHOST} user=${process.env.AUTH_DBUSER} 
+                                        password=${process.env.AUTH_DBPASSWORD} 
+                                        dbname=${process.env.AUTH_DBNAME}', 
+                                        'SELECT sfcode, email, "password" FROM "user"') AS t1 
+                                        (sfcode text, email text, "password" text)
                             WHERE store_user_temporary.sfcode = t1.sfcode 
                             and store_user_temporary.tag like '${data.session}';`;
         return this.runQuery(sqlQuery, QueryTypes.UPDATE, data, "UploadLogic.setStoreUserTempUsername()")
@@ -604,8 +607,11 @@ class UploadLogic {
                         AND
                       st.storeid NOT IN 
                         (
-                            SELECT storeid FROM store where 
-                            tag is not null and "isActive" = 1
+                            SELECT storeid FROM 
+							dblink('host=${process.env.REAL_DBHOST} user=${process.env.REAL_DBUSER} 
+                            password=${process.env.REAL_DBPASSWORD} dbname=${process.env.REAL_DBNAME}', 
+                            'SELECT storeid FROM "store" where tag is not null and "isActive" = 1') AS t1 (storeid text)
+
                         )
                       `;
         return this.runQuery(sqlQuery, QueryTypes.INSERT, data, "UploadLogic.addNewStores()")
@@ -623,7 +629,7 @@ class UploadLogic {
                             st.sfcode NOT IN 
                             (
                                 SELECT sfcode FROM
-                                    dblink('host=${process.env.AUTH_DBHOST} user=nodeuser password=rotikeju98 dbname=authentication', 
+                                    dblink('host=${process.env.AUTH_DBHOST} user=${process.env.AUTH_DBUSER} password=${process.env.AUTH_DBPASSWORD} dbname=${process.env.AUTH_DBNAME}', 
                                         'SELECT sfcode FROM "user"') AS t1 (sfcode text)
                             )
                             `;
@@ -714,59 +720,96 @@ class UploadLogic {
                 })
 
                 let sql = `INSERT INTO "user" (sfcode, email, "password", firstname, tag, "createdAt", "isActive")
-                    SELECT st.sfcode, 
-                        st.email, 
-                        st."password",
-                    	st.firstname, 
-						st.tag, 
-						st."createdAt", 
+                    SELECT sfcode, 
+                        email, 
+                        "password",
+                    	firstname, 
+						tag, 
+						"createdAt", 
 						1                                  
-                    FROM dblink('host=${process.env.DBHOST} user=nodeuser password=rotikeju98 dbname=retail-intelligence', 
+                    FROM dblink('host=${process.env.TEMP_DBHOST} user=${process.env.TEMP_DBUSER} 
+                    password=${process.env.TEMP_DBPASSWORD} dbname=${process.env.TEMP_DBNAME}', 
                     'SELECT sfcode, firstname, email, "password", tag, "createdAt" FROM "user_temp" 
                     WHERE tag like ''${data.session}''') 
 					AS 
-						st (sfcode text, firstname text, email text, "password" text, tag text, "createdAt" date)
+						st (sfcode text, firstname text, email text, "password" text, tag text, "createdAt" date);
                 `;
 
                 let initialization = this.Initialization;
                 let sequelizeAuth = initialization.sequelizeAuth;
+                let sequelizeReal = initialization.sequelizeReal;
+
                 this.runQuery(sql, QueryTypes.INSERT, data, "moveAllToRealTables()", sequelizeAuth).then(()=>{
 
-                    sql = `INSERT INTO "user" (sfcode, email, firstname, tag, "createdAt", "isActive")
-                    SELECT distinct st.sfcode, st.email, 
-                        st.firstname, st.tag, st."createdAt", 1                                  
-                    FROM user_temp st
-                    WHERE 
-                        st.tag like '${data.session}'
-                        AND
-                        st.sfcode not in
-                        (
-                            select sfcode from "user" where "isActive" = 1
-                        )
+                    sql = `INSERT INTO "user" (sfcode, email, "password", firstname, tag, "createdAt", "isActive")
+                    SELECT sfcode, 
+                        email, 
+                        "password",
+                    	firstname, 
+						tag, 
+						"createdAt", 
+						1                                  
+                    FROM dblink('host=${process.env.TEMP_DBHOST} user=${process.env.TEMP_DBUSER} 
+                    password=${process.env.TEMP_DBPASSWORD} dbname=${process.env.TEMP_DBNAME}', 
+                    'SELECT sfcode, firstname, email, "password", tag, "createdAt" FROM "user_temp" 
+                    WHERE tag like ''${data.session}''') 
+					AS 
+						st (sfcode text, firstname text, email text, "password" text, tag text, "createdAt" date);
                     `;
 
-                    this.runQuery(sql, QueryTypes.INSERT, data, "moveAllToRealTables()").then(()=>{
+                    this.runQuery(sql, QueryTypes.INSERT, data, "moveAllToRealTables()", sequelizeReal).then(()=>{
 
 
                         sql = `INSERT INTO store (storeid, store_name, 
-                            store_branch, store_cluster, store_region, 
-                            store_area, store_city, store_kecamatan, tag, archetype, "createdAt", "isActive") 
-                            SELECT st.storeid, st.store_name, 
-                                st.store_branch, st.store_cluster, st.store_region, 
-                                st.store_area, st.store_city, st.store_kecamatan, st.tag, st.archetype, st."createdAt", 1
-                            FROM store_temp st
-                            WHERE st.tag like '${data.session}'
+                                                store_branch, store_cluster, store_region, 
+                                                store_area, store_city, store_kecamatan, tag, archetype, "createdAt", "isActive")
+                                SELECT storeid, store_name,
+                                    store_branch, store_cluster, store_region,
+                                    store_area, store_city, store_kecamatan, tag, archetype, NOW(), 1
+                                FROM dblink('host=${process.env.TEMP_DBHOST} user=${process.env.TEMP_DBUSER} 
+                                            password=${process.env.TEMP_DBPASSWORD} 
+                                            dbname=${process.env.TEMP_DBNAME}',
+                                            'SELECT storeid, store_name,
+                                                    store_branch, store_cluster, store_region,
+                                                    store_area, store_city, store_kecamatan, tag,
+                                                    archetype 
+                                            FROM "store_temp" 
+                                            WHERE tag LIKE ''${data.session}'' AND "isActive" = 1')
+                                AS t1 (storeid text, store_name text,
+                                    store_branch text, store_cluster text, store_region text,
+                                    store_area text, store_city text, store_kecamatan text, tag text,
+                                    archetype text);
                             `;
                         
-                        this.runQuery(sql, QueryTypes.INSERT, data, "moveAllToRealTables()").then(async ()=>{
+                        this.runQuery(sql, QueryTypes.INSERT, data, "moveAllToRealTables()", sequelizeReal).then(async ()=>{
 
-                            sql = `INSERT INTO store_user (sfcode, username, storeid, store_name, tag, "createdAt", "isActive")
-                                SELECT sfcode, username, storeid, store_name, tag, "createdAt", 1
-                                FROM store_user_testing
-                                WHERE tag like '${data.session}'
-                                ;`;
+                            sql = `INSERT INTO store_user ( storeid, 
+                                                            store_name, 
+                                                            username, 
+                                                            sfcode, 
+                                                            tag, 
+                                                            "createdAt", 
+                                                            "isActive")
+                                    SELECT 
+                                        storeid, 
+                                        store_name, 
+                                        username, 
+                                        sfcode, 
+                                        tag, 
+                                        NOW(),
+                                        1
+                                    FROM dblink('host=${process.env.TEMP_DBHOST} user=${process.env.TEMP_DBUSER} 
+                                                    password=${process.env.TEMP_DBPASSWORD} 
+                                                    dbname=${process.env.TEMP_DBNAME}',
+                                                'SELECT storeid, store_name, 
+                                                        username, sfcode, tag
+                                                FROM "store_user_testing" 
+                                                WHERE 
+                                                    tag LIKE ''${data.session}'' AND "isActive" = 1')
+                                    AS t1 (storeid text, store_name text, 
+                                        username text, sfcode text, tag text);`;
 
-                            this.runQuery(sql, QueryTypes.INSERT, data, "moveAllToRealTables()").then(()=>{
+                            this.runQuery(sql, QueryTypes.INSERT, data, "moveAllToRealTables()", sequelizeReal).then(()=>{
 
                                 if(data.rosu)
                                 {
@@ -780,7 +823,7 @@ class UploadLogic {
                                             and
                                             tag not like '${data.session}'
                                         `;
-                                    this.runQuery(sql, QueryTypes.INSERT, data, "moveAllToRealTables()").then(()=>{
+                                    this.runQuery(sql, QueryTypes.INSERT, data, "moveAllToRealTables()", sequelizeReal).then(()=>{
                                         
                                         sql = `UPDATE store_user set "isActive" = 0 where
                                                 storeid in
@@ -792,7 +835,7 @@ class UploadLogic {
                                                 tag not like '${data.session}'
                                             `;
                                         
-                                        this.runQuery(sql, QueryTypes.INSERT, data, "moveAllToRealTables()").then(async()=>{
+                                        this.runQuery(sql, QueryTypes.INSERT, data, "moveAllToRealTables()", sequelizeReal).then(async()=>{
                                             //resolve();
 
                                             await ProcessStatusLogic.create({
@@ -836,23 +879,55 @@ class UploadLogic {
                                     });
                                 }
 
-                            }).catch((e)=>{
+                            }).catch(async (e)=>{
+
+                                await ProcessStatusLogic.create({
+                                    session: data.session,
+                                    message: "Transfering data from temporary to store_user failed ",
+                                    status: "Fail"
+                                })
+
                                 reject(e)
                             })
 
                             
-                        }).catch((e)=>{
+                        }).catch(async (e)=>{
+
+                            await ProcessStatusLogic.create({
+                                session: data.session,
+                                message: "Transfering data from temporary to store failed ",
+                                status: "Fail"
+                            })
+
                             reject(e)
                         })
 
-                    }).catch((e)=>{
+                    }).catch(async (e)=>{
+
+                        await ProcessStatusLogic.create({
+                            session: data.session,
+                            message: "Transfering data from temporary to user failed ",
+                            status: "Fail"
+                        })
                         reject(e)
                     })
-                }).catch((e)=>{
+                }).catch(async (e)=>{
+
+                    await ProcessStatusLogic.create({
+                        session: data.session,
+                        message: "Transfering data from temporary to user in authentication failed ",
+                        status: "Fail"
+                    })
                     reject(e)
                 })
             }
             catch(e) {
+                await ProcessStatusLogic.create({
+                    session: data.session,
+                    message: "Transfering data caused by unknown failed ",
+                    status: "Fail"
+                })
+
                 reject(e);
             }
         })

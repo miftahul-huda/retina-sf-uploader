@@ -11,9 +11,9 @@ const UserModel = require("./modules/models/usermodel");
 const { logger } = require('sequelize/lib/utils/logger');
 
 
-const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD, {
-    host: process.env.DBHOST,
-    dialect: process.env.DBENGINE,
+const sequelize = new Sequelize(process.env.TEMP_DBNAME, process.env.TEMP_DBUSER, process.env.TEMP_DBPASSWORD, {
+    host: process.env.TEMP_DBHOST,
+    dialect: process.env.TEMP_DBENGINE,
     logging: false
 });
 
@@ -24,19 +24,29 @@ const sequelizeAuth = new Sequelize(process.env.AUTH_DBNAME, process.env.AUTH_DB
 });
 
 
+const sequelizeReal = new Sequelize(process.env.REAL_DBNAME, process.env.REAL_DBUSER, process.env.REAL_DBPASSWORD, {
+    host: process.env.REAL_DBHOST,
+    dialect: process.env.REAL_DBENGINE ,
+    logging: false 
+});
+
+
+
 class Initialization {
 
     sequelize = null;
     sequelizeAuth = null;
+    sequelizeReal = null;
 
     static async initializeDatabase(){
 
         let force = false;
         Initialization.sequelize = sequelize;
         Initialization.sequelizeAuth = sequelizeAuth;
+        Initialization.sequelizeReal = sequelizeReal;
         
         ProcessStatusModel.initialize(sequelize, force);
-        StoreModel.initialize(sequelize, force);
+        StoreModel.initialize(sequelizeReal, force);
         UploadHistoryModel.initialize(sequelize, force);
         StoreUserModel.initialize(sequelize, force);
         StoreUserTempModel.initialize(sequelize, force);
